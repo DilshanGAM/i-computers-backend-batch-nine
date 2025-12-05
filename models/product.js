@@ -53,3 +53,5 @@ const proudctSchema = new mongoose.Schema(
 const Product = mongoose.model("Product",proudctSchema)
 
 export default Product;
+
+
