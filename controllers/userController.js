@@ -1,6 +1,9 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export function createUser(req, res) {
 	const hashedPassword = bcrypt.hashSync(req.body.password, 10);
@@ -48,7 +51,7 @@ export function loginUser(req, res) {
 	})
 		.then((user) => {
 			if (user == null) {
-				res.json({
+				res.status(404).json({
 					message: "User with given email not found",
 				});
 			} else {
@@ -58,6 +61,7 @@ export function loginUser(req, res) {
 				);
 
 				if (isPasswordValid) {
+					//check if attempts are more that 3 times and if so, we do not send this token
 					const token = jwt.sign(
 						{
 							email: user.email,
@@ -67,7 +71,7 @@ export function loginUser(req, res) {
 							image: user.image,
 							isEmailVerified: user.isEmailVerified,
 						},
-						"i-computers-54!"
+						process.env.JWT_SECRET
 					);
 
 					console.log(token);
@@ -75,10 +79,12 @@ export function loginUser(req, res) {
 					res.json({
 						message: "Login successfull",
 						token: token,
+						role: user.role,
 					});
 				} else {
 					res.status(401).json({
 						message: "Invalid password",
+						//we should add a record in data base of this failed attempt for the specific email
 					});
 				}
 			}
