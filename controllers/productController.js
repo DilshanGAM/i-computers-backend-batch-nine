@@ -58,6 +58,7 @@ export async function createProduct(req, res) {
 }
 
 export async function getProducts(req, res) {
+	console.log("Get products api called")
 	try {
 		if (isAdmin(req)) {
 			const products = await Product.find();
@@ -135,6 +136,7 @@ export async function updateProduct(req, res) {
 }
 
 export async function getProductById(req , res){
+	console.log("Get product by id api called")
     try{
 
         const productId = req.params.productId;
